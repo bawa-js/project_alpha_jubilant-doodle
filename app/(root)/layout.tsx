@@ -1,7 +1,7 @@
 import { ClerkProvider } from '@clerk/nextjs'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { Toaster } from 'sonner'
+import { Toaster } from '@/components/ui/sonner'
 
 export default function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
