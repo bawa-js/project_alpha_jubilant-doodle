@@ -10,6 +10,7 @@ export function cn(...inputs: ClassValue[]) {
  * @param currency The currency symbol to use
  * @returns The formatted price string
  */
-export function formatPrice(amount: number | null, currency = '₹'): string {
-  return `${currency}${(amount ?? Number(0)).toFixed(2)}`
+export function formatPrice(amount: number | null, currency: string): string | null {
+  if (amount === null || amount === undefined) return null
+  return `${currency}${amount.toFixed(2)}`
 }

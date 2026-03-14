@@ -23,16 +23,20 @@ export function FeaturedCarousel(props: FeaturedCarouselProps) {
   const [count, setCount] = React.useState(0)
 
   React.useEffect(() => {
-    if (!api) {
-      return
-    }
+    if (!api) return
 
     setCount(api.scrollSnapList().length)
-    setCurrent(api.selectedScrollSnap() + 1)
 
-    api.on('select', () => {
-      setCurrent(api.selectedScrollSnap() + 1)
-    })
+    const onSelect = () => {
+      setCurrent(api.selectedScrollSnap())
+    }
+
+    onSelect()
+    api.on('select', onSelect)
+
+    return () => {
+      api.off('select', onSelect)
+    }
   }, [api])
 
   const scrollTo = React.useCallback(
@@ -52,9 +56,9 @@ export function FeaturedCarousel(props: FeaturedCarouselProps) {
         plugins={[Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })]}
         className='w-full'>
         <CarouselContent className='ml-0'>
-          {props.products.map((product) => (
+          {props.products.map((product, index) => (
             <CarouselItem key={product._id} className='pl-0'>
-              <FeaturedSlide product={product} />
+              <FeaturedSlide product={product} priority={index === 0} />
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -89,6 +93,7 @@ type FeaturedProduct = FEATURED_PRODUCTS_QUERYResult[number]
 
 interface FeaturedSlideProps {
   product: FeaturedProduct
+  priority?: boolean
 }
 
 function FeaturedSlide(props: FeaturedSlideProps) {
@@ -105,7 +110,7 @@ function FeaturedSlide(props: FeaturedSlideProps) {
             fill
             className='object-cover'
             sizes='(max-width: 768px) 100vw, 60vw'
-            priority
+            priority={props.priority}
           />
         : <div className='flex h-full items-center justify-center bg-zinc-800'>
             <span className='text-zinc-500'>No image</span>
@@ -137,7 +142,13 @@ function FeaturedSlide(props: FeaturedSlideProps) {
           </p>
         )}
 
-        <p className='mt-6 text-3xl font-bold text-white lg:text-4xl'>{formatPrice(props.product.price)}</p>
+        {(() => {
+          const formattedPrice = formatPrice(props.product.price, '₹')
+          if (!formattedPrice) {
+            return <p className='mt-6 text-3xl font-bold text-white lg:text-4xl'>Price unavailable</p>
+          }
+          return <p className='mt-6 text-3xl font-bold text-white lg:text-4xl'>{formattedPrice}</p>
+        })()}
 
         <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
           <Button asChild size='lg' className='bg-white text-zinc-900 hover:bg-zinc-100'>

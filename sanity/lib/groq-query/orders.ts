@@ -25,6 +25,7 @@ export const ORDERS_BY_USER_QUERY = defineQuery(`*[
 export const ORDER_BY_ID_QUERY = defineQuery(`*[
   _type == "order"
   && _id == $id
+  && clerkUserId == $clerkUserId
 ][0] {
   _id,
   orderNumber,
