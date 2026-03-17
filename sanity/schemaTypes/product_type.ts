@@ -37,7 +37,7 @@ export const productType = defineType({
       name: 'price',
       type: 'number',
       group: 'details',
-      description: 'Price in GBP (e.g., 599.99)',
+      description: 'Price in INR (e.g., 599.99)',
       validation: (rule) => [
         rule.required().error('Price is required'),
         rule.positive().error('Price must be a positive number'),
@@ -104,7 +104,7 @@ export const productType = defineType({
   preview: {
     select: { title: 'name', subtitle: 'category.title', media: 'images.0', price: 'price' },
     prepare({ title, subtitle, media, price }) {
-      return { title, subtitle: `${subtitle ? subtitle + ' • ' : ''}£${price ?? 0}`, media }
+      return { title, subtitle: `${subtitle ? subtitle + ' • ' : ''}₹${price ?? 0}`, media }
     },
   },
 })
